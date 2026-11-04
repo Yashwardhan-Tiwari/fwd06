@@ -9,6 +9,8 @@
     padding: 20px;
     border-radius: 8px;
     margin-bottom: 30px;
+    align-items: center;
+    text-align: center;
 }
 
 .stats-grid {
@@ -115,4 +117,37 @@
     padding: 10px 16px;
     border-radius: 4px;
     cursor: pointer;
+}
+
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.btn-logout {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+
+.section-header {
+    flex: 1;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 15px;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.Know-how-to {
+    flex: 1;
+    padding: 15px;
+    border-radius: 6px;
+    text-align: center;
 }
