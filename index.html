@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusParcel - Home & Dashboard</title>
+
+    <!-- Link external CSS files -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/footer.css">
+</head>
+<body>
+    <!-- South Asian University strip -->
+    <img class="sau-strip" src="images/sau-header.png" alt="South Asian University - A University Established by SAARC Nations">
+
+    <!-- Header Section -->
+    <header class="navbar">
+        <div class="logo-container">
+            <h2>Campus<span>Parcel</span></h2>
+        </div>
+        <nav class="nav-links">
+            <a href="index.html" class="active">Dashboard</a>
+            <a href="pages/register.html">Register Your Parcel</a>
+            <a href="pages/my-parcel.html">My Parcels</a>
+            <a href="pages/support.html">Help &amp; Support</a>
+        </nav>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-container">
+
+        <!-- Welcome Banner -->
+        <section class="welcome-banner hero">
+            <h1>Welcome to CampusParcel</h1>
+            <p>Secure, transparent, and hassle-free campus delivery tracking.</p>
+        </section>
+
+        <section class="dashboard-section" id="student-view">
+            <div class="section-header">
+                <h2>CampusParcel Dashboard</h2>
+                <span class="badge badge-info">4 simple steps</span>
+            </div>
+
+            <!-- The 4 steps (each card is a link) -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>1. Receive</h3>
+                    <p>Guard receives your parcel at the gate.</p>
+                </div>
+                <a class="stat-card step-card" href="pages/register.html">
+                    <h3>2. Register</h3>
+                    <p>Register an expected parcel and share an OTP.</p>
+                </a>
+                <div class="stat-card">
+                    <h3>3. Secure</h3>
+                    <p>Parcel is stored on a shelf with photos.</p>
+                </div>
+                <a class="stat-card step-card" href="pages/my-parcel.html">
+                    <h3>4. Collect</h3>
+                    <p>Show your OTP to the guard and collect it.</p>
+                </a>
+            </div>
+
+            <div class="about-text">
+                <h2 class="know-how">Know how this operates</h2>
+                <p>CampusParcel is a web based application which you can use to collect your parcel in campus securely, without any hassle and without any chance of missing it.</p>
+                <p>If you book a parcel on COD you can share the OTP with the guards beforehand, or during the delivery, just by filling a small form on the "Register Your Parcel" page. Even if you are getting a parcel from a friend or family member, you can register it on that page too.</p>
+                <p>Guards receive and hand over parcels using their own separate Guard Panel (PIN protected). If you are a student or faculty member you can go to the "My Parcels" page to check or collect your parcel.</p>
+                <p>For any help, support or complaints you can go to the "Help &amp; Support" section.</p>
+            </div>
+        </section>
+
+        <!-- Campus pictures -->
+        <section class="dashboard-section">
+            <div class="section-header">
+                <h2>Our Campus</h2>
+                <span class="badge badge-info">South Asian University, New Delhi</span>
+            </div>
+            <div class="gallery">
+                <figure>
+                    <img src="images/hostel-block.jpg" alt="Hostel block at South Asian University">
+                    <figcaption>Hostel Block - parcels reach students here</figcaption>
+                </figure>
+                <figure>
+                    <img src="images/academic-block.jpg" alt="Academic building at South Asian University">
+                    <figcaption>Academic Block</figcaption>
+                </figure>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2026 CampusParcel System. All Rights Reserved.</p>
+            <p>Designed for Secure Campus Delivery Management at South Asian University.</p>
+            <p><a class="guard-link" href="pages/guard-panel.html">Guard login</a></p>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/main.js"></script>
+
+</body>
+</html>
