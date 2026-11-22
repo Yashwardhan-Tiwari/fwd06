@@ -1,16 +1,46 @@
 # CampusParcel
 
-A simple website for **secure parcel collection at South Asian University**.
-A guard registers a parcel, the student gets a 6-digit **OTP** by email, and the parcel is handed over only when the OTP matches.
+A simple website for **secure parcel collection at South Asian University**, built with plain HTML, CSS and JavaScript (no frameworks, no backend).
 
-Built with plain **HTML, CSS and JavaScript** (no frameworks, no backend).
-\
+## How it works
+
+There are **two different OTPs**:
+
+| OTP | Who makes it | Where it goes | What it is for |
+|---|---|---|---|
+| **Delivery OTP** | The delivery app (Flipkart, Amazon, ...) | Student types it on *Register Your Parcel* | The guard gives it to the delivery person to take the parcel |
+| **Pickup OTP** | The guard (OTP box on the Guard Panel) | Emailed to the student | The student shows it to the guard to collect the parcel |
+
+### The journey of one parcel (who gets which OTP)
+
+1. **Student registers the parcel** and types the **delivery OTP** from Flipkart/Amazon.
+   -> The student gets a confirmation email with the Parcel ID.
+   -> **The guard desk gets an email** (`guardEmail` in `js/config.js`) with the student's name, phone, courier and the **delivery OTP**.
+2. **The parcel arrives at the gate.** The guard gives the delivery OTP to the delivery person and takes the parcel.
+3. **The guard registers the parcel** on the Guard Panel (shelf, photos) and presses **Register & Send OTP**.
+   -> The guard's OTP box makes a **pickup OTP** and **emails it to the student**.
+4. **The student comes to collect** and tells the guard the pickup OTP (from the email, or from the *My Parcels* page).
+5. **The guard enters Parcel ID + pickup OTP** under *Verify & Handover*. If it matches, the parcel is marked *Collected*.
+
+If email is not set up yet, the guard simply reads the pickup OTP shown on the Guard Panel to the student.
+
+### Student
+1. **Register Your Parcel** - fill the form with name, roll number, email, phone, courier and the delivery OTP. ("Any other instructions" is optional.) Parcels coming from a friend or family member use the second form.
+2. When the parcel reaches the gate, a **pickup OTP is emailed** to the student.
+3. **My Parcels** - enter roll number + email to see status, storage shelf and pickup OTP.
+
+### Guard (Guard Login in the top menu, PIN protected)
+1. See how many parcels are **pre-registered**, with the student's name, phone, courier and the **delivery OTP** (to give to the delivery person).
+2. Press **Receive** on a parcel (or type details for a new one), add the shelf and photos, and press **Register & Send OTP**. The OTP box generates a 6-digit pickup OTP and emails it to the student's email address.
+3. **Verify & Handover** - enter the Parcel ID and the student's pickup OTP. The parcel is marked *Collected* only if the OTP matches.
+
+The default guard PIN is `1234`. Change it in `js/config.js` (`GUARD_PIN`). This is a simple front-end lock for the project, not real security.
+
 
 ## Folder structure
 
 ```
 index.html            <- home / dashboard (main entry file)
-README.md
 pages/                <- all other pages
     register.html
     my-parcel.html
@@ -19,22 +49,22 @@ pages/                <- all other pages
 css/                  <- stylesheets
     style.css  header.css  footer.css
 js/                   <- JavaScript
-    config.js         (email keys - the only file you edit)
+    config.js         (email keys, guard PIN)
     main.js           (shared helpers: storage, OTP, email)
-    register.js  guard-login.js  guard.js  my-parcel.js  support.js   (one per page)
+    register.js  guard-login.js  guard.js  my-parcel.js  support.js
 images/               <- South Asian University pictures
 ```
 
-## Guard Panel is separate
-The Guard Panel is **not in the main menu**. Guards open it from the small **Guard login** link in the footer, then type the PIN . It has its own header with a **Back to main site** link and a **Lock** button.
-This PIN is a simple front-end lock for the project, not real security.
+## Where each feature is in the code
 
-### The flow
-1. **Register Your Parcel** - student fills the form (or clicks *Generate* for an OTP). A Parcel ID is created and an email is sent.
-2. **Guard Panel -> Register Collecting Parcel** - guard enters the student's roll number and shelf. If the student pre-registered, that parcel is updated to "At Main Gate"; otherwise a new parcel and OTP are created. The student is emailed.
-3. **Guard Panel -> Verify & Handover** - guard enters Parcel ID + OTP. The code checks: parcel exists -> not already collected -> has reached the gate -> OTP matches. Then it is marked **Collected**.
-4. **My Parcels** - student enters their roll number to see status and OTP.
-
-
-This is normal for a front-end-only project; a real system would use a server and database.
-- Photos on the guard panel are not stored, only their file names (photos are too large for localStorage).
+| Feature | Where |
+|---|---|
+| OTP generator | `generateOtp()` in `js/main.js` |
+| Parcel ID generator | `generateId()` in `js/main.js` |
+| Saving data | `getList()` / `saveList()` in `js/main.js` (browser `localStorage`) |
+| Email sending | `sendEmail()` in `js/main.js` |
+| Pre-register a parcel | `js/register.js` |
+| Guard PIN lock | `js/guard-login.js` |
+| Pre-registered list, OTP box, receive parcel, verify OTP | `js/guard.js` |
+| My Parcels | `js/my-parcel.js` |
+| Complaints and feedback | `js/support.js` |

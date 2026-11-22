@@ -1,11 +1,9 @@
-/* ===== header.css : top strip + navigation bar ===== */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
     color: #1e293b;
 }
 
-/* South Asian University strip image at the very top */
 .sau-strip {
     display: block;
     width: 100%;
@@ -39,7 +37,6 @@ body {
     font-weight: bold;
 }
 
-/* "active" is the page you are currently on */
 .nav-links a.active,
 .nav-links a:hover {
     color: #38bdf8;
@@ -56,7 +53,6 @@ body {
     font-size: 14px;
 }
 
-/* ===== Upgrade: header stays visible while scrolling ===== */
 .navbar {
     position: sticky;
     top: 0;
@@ -73,7 +69,6 @@ body {
     border-bottom-color: #38bdf8;
 }
 
-/* Lock button in the Guard header */
 .btn-logout {
     background-color: #ef4444;
     color: white;
@@ -85,4 +80,16 @@ body {
 
 .btn-logout:hover {
     background-color: #dc2626;
+}
+
+.nav-links a.guard-nav {
+    border: 1px solid #f59e0b;
+    color: #f59e0b;
+    border-radius: 4px;
+    padding: 4px 10px;
+}
+
+.nav-links a.guard-nav:hover {
+    background-color: #f59e0b;
+    color: #1e293b;
 }

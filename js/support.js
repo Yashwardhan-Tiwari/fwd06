@@ -1,6 +1,3 @@
-// ===== support.js : "Help & Support" page =====
-
-// ---------- Form 1: complaint ----------
 
 document.getElementById("complaint-form").addEventListener("submit", async function (event) {
     event.preventDefault();
@@ -9,7 +6,6 @@ document.getElementById("complaint-form").addEventListener("submit", async funct
     button.disabled = true;
     button.textContent = "Submitting...";
 
-    // the visible text of the chosen dropdown option, e.g. "Damaged Parcel"
     const dropdown = document.getElementById("issue-type");
     const issueText = dropdown.options[dropdown.selectedIndex].text;
 
@@ -26,7 +22,6 @@ document.getElementById("complaint-form").addEventListener("submit", async funct
     complaints.push(complaint);
     saveList("complaints", complaints);
 
-    // email the complaint to the support team
     const text = "New complaint " + complaint.id + "\n\n" +
         "Student: " + complaint.rollNo + " (" + complaint.email + ")\n" +
         "Parcel ID: " + complaint.parcelId + "\n" +
@@ -45,7 +40,6 @@ document.getElementById("complaint-form").addEventListener("submit", async funct
     button.textContent = "Submit Complaint";
 });
 
-// ---------- Form 2: feedback ----------
 
 document.getElementById("feedback-form").addEventListener("submit", async function (event) {
     event.preventDefault();

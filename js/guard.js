@@ -1,82 +1,150 @@
-// ===== guard.js : "Guard Panel" page =====
 
-// ---------- Action 1: guard registers a parcel that has reached the gate ----------
+
+let linkedId = "";   
+
+const statusText = document.getElementById("email-status");
+if (emailIsConfigured()) {
+    statusText.textContent = "Email is set up. OTPs will be sent to students.";
+} else {
+    statusText.textContent = "Email is NOT set up yet. OTPs will not be emailed (see README, step 'Turn on email').";
+}
+
+document.getElementById("test-email-btn").addEventListener("click", async function () {
+    const sent = await sendEmail(EMAILJS_CONFIG.supportEmail, "CampusParcel test email", "If you can read this, email sending works.");
+    showMessage("email-test-message", emailNote(sent, EMAILJS_CONFIG.supportEmail), sent ? "success" : "error");
+});
+
+
+function refreshGuardPage() {
+    const parcels = getList("parcels");
+    const pre = parcels.filter(function (p) { return p.status === "Pre-registered"; });
+    const atGate = parcels.filter(function (p) { return p.status === "At Main Gate"; });
+    const done = parcels.filter(function (p) { return p.status === "Collected"; });
+
+    document.getElementById("g-stat-pre").textContent = pre.length;
+    document.getElementById("g-stat-gate").textContent = atGate.length;
+    document.getElementById("g-stat-done").textContent = done.length;
+
+    const body = document.getElementById("pre-rows");
+    if (pre.length === 0) {
+        body.innerHTML = '<tr><td colspan="8">No pre-registered parcels right now.</td></tr>';
+        return;
+    }
+
+    let rows = "";
+    pre.forEach(function (p) {
+        const otpCell = p.deliveryOtp
+            ? '<span class="otp-code">' + escapeHtml(p.deliveryOtp) + "</span>"
+            : "Not needed (family / friend)";
+        rows += "<tr>" +
+            "<td>" + escapeHtml(p.id) + "</td>" +
+            "<td>" + escapeHtml(p.studentName) + "<br><small>" + escapeHtml(p.rollNo) + "</small></td>" +
+            "<td>" + escapeHtml(p.phone) + "</td>" +
+            "<td>" + escapeHtml(p.courier) + "</td>" +
+            "<td>" + otpCell + "</td>" +
+            "<td>" + escapeHtml(p.instructions) + "</td>" +
+            "<td>" + escapeHtml(p.createdAt) + "</td>" +
+            '<td><button class="btn-primary" data-id="' + escapeHtml(p.id) + '">Receive</button></td>' +
+            "</tr>";
+    });
+    body.innerHTML = rows;
+}
+
+document.getElementById("pre-rows").addEventListener("click", function (event) {
+    const id = event.target.getAttribute("data-id");
+    if (id === null) {
+        return;
+    }
+    const p = getList("parcels").find(function (item) { return item.id === id; });
+
+    document.getElementById("g-name").value = p.studentName;
+    document.getElementById("g-roll").value = p.rollNo;
+    document.getElementById("g-email").value = p.email;
+    document.getElementById("g-courier").value = p.courier;
+    linkedId = p.id;
+    document.getElementById("linked-note").textContent =
+        "Receiving pre-registered parcel " + p.id + ". Add the shelf and photos, then press Register.";
+    document.getElementById("guard-register-form").scrollIntoView();
+});
+
+window.addEventListener("storage", refreshGuardPage);
+
+
+function newOtp() {
+    document.getElementById("g-otp").value = generateOtp();
+}
+document.getElementById("g-generate-btn").addEventListener("click", newOtp);
+newOtp();   // the box already has an OTP when the page opens
+
 
 document.getElementById("guard-register-form").addEventListener("submit", async function (event) {
     event.preventDefault();
 
     const button = document.getElementById("guard-register-btn");
     button.disabled = true;
-    button.textContent = "Saving...";
+    button.textContent = "Sending...";
 
-    // 1. read the form
-    const rollNo = getValue("g-roll").toUpperCase();
+    // read the form
     const email = getValue("g-email");
-    const courier = getValue("g-courier");
+    const otp = getValue("g-otp") || generateOtp();
     const storage = getValue("g-storage");
 
     // Photos: we only keep the file name (photos are too big for localStorage)
     const agentFile = document.getElementById("g-agent-photo").files[0];
     const shelfFile = document.getElementById("g-shelf-photo").files[0];
-    const agentPhoto = agentFile ? agentFile.name : "Not attached";
-    const shelfPhoto = shelfFile ? shelfFile.name : "Not attached";
 
     const parcels = getList("parcels");
 
-    // 2. did this student already register this parcel on the "Register" page?
-    //    If yes, update that parcel. If not, create a new one.
-    let parcel = parcels.find(function (p) {
-        return p.rollNo === rollNo && p.status === "Expected";
-    });
-
-    if (parcel) {
-        parcel.status = "At Main Gate";
-        parcel.courier = courier;
-        parcel.storage = storage;
-        parcel.email = email;
-        parcel.receivedAt = nowText();
-        parcel.agentPhoto = agentPhoto;
-        parcel.shelfPhoto = shelfPhoto;
-    } else {
+    let parcel = parcels.find(function (p) { return p.id === linkedId; });
+    if (!parcel) {
         parcel = {
             id: generateId("CP", parcels),
-            rollNo: rollNo,
-            email: email,
-            courier: courier,
-            otp: generateOtp(),        // new OTP for this parcel
-            instructions: "",
-            storage: storage,
-            status: "At Main Gate",
-            createdAt: nowText(),
-            receivedAt: nowText(),
-            agentPhoto: agentPhoto,
-            shelfPhoto: shelfPhoto
+            type: "delivery",
+            phone: "",
+            deliveryOtp: "",
+            instructions: "None",
+            createdAt: nowText()
         };
         parcels.push(parcel);
     }
+    parcel.studentName = getValue("g-name");
+    parcel.rollNo = getValue("g-roll").toUpperCase();
+    parcel.email = email;
+    parcel.courier = getValue("g-courier");
+    parcel.storage = storage;
+    parcel.pickupOtp = otp;
+    parcel.status = "At Main Gate";
+    parcel.receivedAt = nowText();
+    parcel.agentPhoto = agentFile ? agentFile.name : "Not attached";
+    parcel.shelfPhoto = shelfFile ? shelfFile.name : "Not attached";
     saveList("parcels", parcels);
 
-    // 3. email the student
-    const text = "Hello " + rollNo + ",\n\n" +
-        "Your parcel from " + courier + " has reached the main gate.\n" +
+    const text = "Hello " + parcel.studentName + ",\n\n" +
+        "Your parcel from " + parcel.courier + " has reached the main gate.\n" +
         "Parcel ID: " + parcel.id + "\n" +
-        "Stored at: " + storage + "\n" +
-        "OTP: " + parcel.otp + "\n\n" +
-        "Show this OTP to the guard to collect it.\n- CampusParcel";
+        "Stored at: " + storage + "\n\n" +
+        "Your pickup OTP: " + otp + "\n\n" +
+        "Show this OTP to the guard to collect your parcel.\n- CampusParcel";
     const sent = await sendEmail(email, "CampusParcel: Parcel " + parcel.id + " has arrived", text);
 
-    // 4. show the result (the OTP is only shown on screen if email failed)
-    const type = sent ? "success" : "warning";
-    showMessage("guard-register-message",
-        "Parcel " + parcel.id + " registered. " + otpEmailText(sent, email, parcel.otp),
-        type);
+    if (sent) {
+        showMessage("guard-register-message", "Parcel " + parcel.id + " registered. OTP " + otp + " was emailed to " + email + ".", "success");
+    } else {
+        showMessage("guard-register-message",
+            "Parcel " + parcel.id + " registered, but the email failed (" + lastEmailError + "). Please give the student this OTP yourself: " + otp,
+            "warning");
+    }
 
+    // get ready for the next parcel
+    linkedId = "";
+    document.getElementById("linked-note").textContent = "";
     document.getElementById("guard-register-form").reset();
+    newOtp();
+    refreshGuardPage();
     button.disabled = false;
     button.textContent = "Register & Send OTP";
 });
 
-// ---------- Action 2: guard checks the OTP and hands over the parcel ----------
 
 document.getElementById("verify-form").addEventListener("submit", function (event) {
     event.preventDefault();
@@ -89,7 +157,6 @@ document.getElementById("verify-form").addEventListener("submit", function (even
         return p.id === parcelId;
     });
 
-    // Check things one by one and stop at the first problem
     if (!parcel) {
         showMessage("verify-message", "No parcel found with ID " + parcelId + ".", "error");
         return;
@@ -98,22 +165,24 @@ document.getElementById("verify-form").addEventListener("submit", function (even
         showMessage("verify-message", "Parcel " + parcelId + " was already collected on " + parcel.collectedAt + ".", "error");
         return;
     }
-    if (parcel.status === "Expected") {
-        showMessage("verify-message", "Parcel " + parcelId + " has not been registered at the gate yet.", "error");
+    if (parcel.status === "Pre-registered") {
+        showMessage("verify-message", "Parcel " + parcelId + " has not been received at the gate yet.", "error");
         return;
     }
-    if (parcel.otp !== otp) {
+    if (parcel.pickupOtp !== otp) {
         showMessage("verify-message", "Wrong OTP. Parcel NOT handed over.", "error");
         return;
     }
 
-    // everything is correct -> mark as collected
     parcel.status = "Collected";
     parcel.collectedAt = nowText();
     saveList("parcels", parcels);
 
     showMessage("verify-message",
-        "OTP verified. Parcel " + parcelId + " handed over to " + parcel.rollNo + ".",
+        "OTP verified. Parcel " + parcelId + " handed over to " + parcel.studentName + " (" + parcel.rollNo + ").",
         "success");
     document.getElementById("verify-form").reset();
+    refreshGuardPage();
 });
+
+refreshGuardPage();

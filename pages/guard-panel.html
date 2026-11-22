@@ -5,16 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CampusParcel - Guard Panel</title>
 
-    <!-- Link external CSS files -->
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/header.css">
     <link rel="stylesheet" href="../css/footer.css">
 </head>
 <body>
-    <!-- South Asian University strip -->
     <img class="sau-strip" src="../images/sau-header.png" alt="South Asian University - A University Established by SAARC Nations">
 
-    <!-- Guard header (separate from the main site) -->
     <header class="navbar guard-navbar">
         <div class="logo-container">
             <h2>Campus<span>Parcel</span> Guard</h2>
@@ -51,26 +48,47 @@
             <p>Receive parcels at the gate and hand them over safely with an OTP.</p>
         </section>
 
+
         <section class="dashboard-section" id="guard-view">
             <div class="section-header">
                 <h2>Security Guard Panel</h2>
                 <span class="badge badge-warning">Gate Entry Actions</span>
             </div>
 
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Pre-registered</h3>
+                    <p class="stat-number" id="g-stat-pre">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>At Main Gate</h3>
+                    <p class="stat-number" id="g-stat-gate">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Collected</h3>
+                    <p class="stat-number" id="g-stat-done">0</p>
+                </div>
+            </div>
+
             <div class="guard-grid">
 
-                <!-- Action 1: Register New Incoming Parcel -->
                 <div class="card">
-                    <h3>1. Register Collecting Parcel</h3>
+                    <h3>1. Register Parcel &amp; Send OTP</h3>
+                    <p id="linked-note" class="hint"></p>
                     <form id="guard-register-form">
+                        <div class="form-group">
+                            <label for="g-name">Student / Family-Friend Name:</label>
+                            <input type="text" id="g-name" placeholder="e.g., Yashwardhan Tiwari" required>
+                        </div>
+
                         <div class="form-group">
                             <label for="g-roll">Student Roll / ID Number:</label>
                             <input type="text" id="g-roll" placeholder="e.g., 2026BT01005" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="g-email">Student Email:</label>
-                            <input type="email" id="g-email" placeholder="e.g., student@gmail.com" required>
+                            <label for="g-email">Student Email (OTP is sent here):</label>
+                            <input type="email" id="g-email" pattern="[^@\s]+@[^@\s]+\.[a-zA-Z]{2,}" title="Enter a real email address, e.g. name@gmail.com" placeholder="e.g., student@gmail.com" required>
                         </div>
 
                         <div class="form-group">
@@ -81,6 +99,14 @@
                         <div class="form-group">
                             <label for="g-storage">Assigned Storage Shelf / Rack:</label>
                             <input type="text" id="g-storage" placeholder="e.g., Rack B - Slot 12" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="g-otp">Pickup OTP:</label>
+                            <div class="otp-row">
+                                <input type="text" id="g-otp" readonly>
+                                <button type="button" id="g-generate-btn" class="btn-secondary">Generate OTP</button>
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -98,7 +124,6 @@
                     <div id="guard-register-message" class="message"></div>
                 </div>
 
-                <!-- Action 2: Handover Parcel via OTP Verification -->
                 <div class="card">
                     <h3>2. Verify &amp; Handover Parcel</h3>
                     <form id="verify-form">
@@ -108,7 +133,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="v-otp">Enter Student OTP:</label>
+                            <label for="v-otp">Enter Student's Pickup OTP:</label>
                             <input type="text" id="v-otp" maxlength="6" pattern="[0-9]{6}" title="Enter exactly 6 digits" placeholder="Enter 6-digit OTP" required>
                         </div>
 
@@ -118,11 +143,32 @@
                 </div>
 
             </div>
+
+            <div class="table-container" style="margin-top: 30px;">
+                <h3>Pre-registered Parcels</h3>
+                <p class="hint">Give the Delivery OTP to the delivery person to collect the parcel. Press Receive to fill the form above.</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parcel ID</th>
+                            <th>Student</th>
+                            <th>Phone</th>
+                            <th>Courier / From</th>
+                            <th>Delivery OTP</th>
+                            <th>Instructions</th>
+                            <th>Registered</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pre-rows">
+                        <tr><td colspan="8">No pre-registered parcels right now.</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
 
     </main>
 
-    <!-- Footer Section -->
     <footer class="footer">
         <div class="footer-content">
             <p>&copy; 2026 CampusParcel System. All Rights Reserved.</p>
