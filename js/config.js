@@ -5,7 +5,7 @@ const EMAILJS_CONFIG = {
     serviceId:  "service_80npmqk",     
     templateId: "template_5a2rj4d",  
     supportEmail: "yashwardhan1907@gmail.com",
-    guardEmail:   "sau202600861@students.sau.ac.in"  registered parcel
+    guardEmail:   "sau202600861@students.sau.ac.in"
 };
 
 const GUARD_PIN = "1234";
