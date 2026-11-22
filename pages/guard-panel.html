@@ -25,7 +25,7 @@
         </div>
     </header>
 
-    <!-- PIN screen: shown until the guard enters the PIN -->
+    <!-- PIN gate (toggled via guard-login.js) -->
     <main class="main-container" id="guard-lock">
         <div class="card pin-card">
             <h3>Guard Login</h3>
@@ -41,8 +41,8 @@
         </div>
     </main>
 
+    <!-- Main guard workspace (hidden until unlocked) -->
     <main class="main-container" id="guard-content" style="display: none;">
-
         <section class="welcome-banner">
             <h1>Guard Panel</h1>
             <p>Receive parcels at the gate and hand them over safely with an OTP.</p>
@@ -71,7 +71,7 @@
             </div>
 
             <div class="guard-grid">
-
+                <!-- Intake & pickup OTP dispatch -->
                 <div class="card">
                     <h3>1. Register Parcel &amp; Send OTP</h3>
                     <p id="linked-note" class="hint"></p>
@@ -124,6 +124,7 @@
                     <div id="guard-register-message" class="message"></div>
                 </div>
 
+                <!-- Student handover verification -->
                 <div class="card">
                     <h3>2. Verify &amp; Handover Parcel</h3>
                     <form id="verify-form">
@@ -141,9 +142,9 @@
                     </form>
                     <div id="verify-message" class="message"></div>
                 </div>
-
             </div>
 
+            <!-- Incoming pre-registered queue -->
             <div class="table-container" style="margin-top: 30px;">
                 <h3>Pre-registered Parcels</h3>
                 <p class="hint">Give the Delivery OTP to the delivery person to collect the parcel. Press Receive to fill the form above.</p>
@@ -166,14 +167,12 @@
                 </table>
             </div>
         </section>
-
     </main>
 
     <footer class="footer">
         <div class="footer-content">
             <p>&copy; 2026 CampusParcel System. All Rights Reserved.</p>
             <p>Designed for Secure Campus Delivery Management at South Asian University.</p>
-            
         </div>
     </footer>
 
@@ -181,6 +180,5 @@
     <script src="../js/main.js"></script>
     <script src="../js/guard-login.js"></script>
     <script src="../js/guard.js"></script>
-
 </body>
 </html>
