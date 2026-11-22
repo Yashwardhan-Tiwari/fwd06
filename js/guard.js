@@ -2,17 +2,7 @@
 
 let linkedId = "";   
 
-const statusText = document.getElementById("email-status");
-if (emailIsConfigured()) {
-    statusText.textContent = "Email is set up. OTPs will be sent to students.";
-} else {
-    statusText.textContent = "Email is NOT set up yet. OTPs will not be emailed (see README, step 'Turn on email').";
-}
 
-document.getElementById("test-email-btn").addEventListener("click", async function () {
-    const sent = await sendEmail(EMAILJS_CONFIG.supportEmail, "CampusParcel test email", "If you can read this, email sending works.");
-    showMessage("email-test-message", emailNote(sent, EMAILJS_CONFIG.supportEmail), sent ? "success" : "error");
-});
 
 
 function refreshGuardPage() {
